@@ -1,9 +1,9 @@
-		//// apply_filters_to_fhog()å‡½æ•°
-    	//// åŠŸèƒ½ï¼šå¯¹HOGç‰¹å¾é‡‘å­—å¡”çš„æŸä¸€å±‚æ»¤æ³¢ï¼ˆ31ç»´æ»¤æ³¢åçš„ç»“æœç›¸åŠ ï¼‰
-    	//// å‚æ•°ï¼š- saliency_image 	 å„ç»´æ»¤æ³¢ç›¸åŠ åçš„ç»“æœï¼Œsaliency_imageçš„ä¸€ä¸ªåƒç´ ï¼Œå¯¹åº”äºç‰¹å¾å±‚ä¸­çš„ä¸€ä¸ªæ£€æµ‹çª—å£
-		////	   -feats    æŸä¸€å±‚ç‰¹å¾		- feats[i]	   31ç»´ä¸­çš„æŸä¸€ç»´
-    	//// 	   - area				 æ»¤æ³¢åï¼Œæœªè¢«0å¡«å……çš„çŸ©å½¢åŒºåŸŸ
-    	
+        //// apply_filters_to_fhog()º¯Êı
+        //// ¹¦ÄÜ£º¶ÔHOGÌØÕ÷½ğ×ÖËşµÄÄ³Ò»²ãÂË²¨£¨31Î¬ÂË²¨ºóµÄ½á¹ûÏà¼Ó£©
+        //// ²ÎÊı£º- saliency_image     ¸÷Î¬ÂË²¨Ïà¼ÓºóµÄ½á¹û£¬saliency_imageµÄÒ»¸öÏñËØ£¬¶ÔÓ¦ÓÚÌØÕ÷²ãÖĞµÄÒ»¸ö¼ì²â´°¿Ú
+        ////       -feats    Ä³Ò»²ãÌØÕ÷      - feats[i]     31Î¬ÖĞµÄÄ³Ò»Î¬
+        ////       - area                ÂË²¨ºó£¬Î´±»0Ìî³äµÄ¾ØĞÎÇøÓò
+        
         template <typename fhog_filterbank>
         rectangle apply_filters_to_fhog (
             const fhog_filterbank& w,
@@ -12,32 +12,35 @@
         )
         {
 
-			std::cout << "apply_filters_to_fhog()" << endl;
-
-            const unsigned long num_separable_filters = w.num_separable_filters();	
+#ifdef SHOW_FUNC_ENTRY
+            std::cout << "apply_filters_to_fhog()" << endl;
+#endif
+            const unsigned long num_separable_filters = w.num_separable_filters();  
             rectangle area;
 
-			//// å¯¹31ç»´ä¸­çš„æŸä¸€ç»´åšæ»¤æ³¢å·ç§¯ï¼Œå¹¶å°†ç»“æœç›¸åŠ 
-			
-			//// 1.åœ¨è¯¥æ¡ä»¶ä¸‹ä½¿ç”¨ regular filter 
+            //// ¶Ô31Î¬ÖĞµÄÄ³Ò»Î¬×öÂË²¨¾í»ı£¬²¢½«½á¹ûÏà¼Ó
+            
+            //// 1.ÔÚ¸ÃÌõ¼şÏÂÊ¹ÓÃ regular filter 
             // use the separable filters if they would be faster than running the regular filters.
-            if (num_separable_filters > w.filters.size()*std::min(w.filters[0].nr(),w.filters[0].nc())/3.0)		//è®¡ç®—å¤æ‚åº¦çš„å…¬å¼å¾—å‡º
+            if (num_separable_filters > w.filters.size()*std::min(w.filters[0].nr(),w.filters[0].nc())/3.0)     //¼ÆËã¸´ÔÓ¶ÈµÄ¹«Ê½µÃ³ö
             {
-                area = spatially_filter_image(feats[0], saliency_image, w.filters[0]);					//ç¬¬ä¸€æ¬¡æ»¤æ³¢ç»“æœé‡å†™
+                area = spatially_filter_image(feats[0], saliency_image, w.filters[0]);                  //µÚÒ»´ÎÂË²¨½á¹ûÖØĞ´
                 for (unsigned long i = 1; i < w.filters.size(); ++i)
                 {
-                	//// å¯¹HOGé‡‘å­—å¡”çš„æŸä¸€å±‚æŸä¸€ç»´çš„ï¼Œå³31ç»´ä¸­çš„æŸä¸€ç»´åšæ»¤æ³¢å·ç§¯
+                    //// ¶ÔHOG½ğ×ÖËşµÄÄ³Ò»²ãÄ³Ò»Î¬µÄ£¬¼´31Î¬ÖĞµÄÄ³Ò»Î¬×öÂË²¨¾í»ı
                     // now we filter but the output adds to saliency_image rather than
                     // overwriting it.
-                    spatially_filter_image(feats[i], saliency_image, w.filters[i], 1, false, true);		//å°†31ç»´çš„æ»¤æ³¢ç»“æœç›¸åŠ 
+                    spatially_filter_image(feats[i], saliency_image, w.filters[i], 1, false, true);     //½«31Î¬µÄÂË²¨½á¹ûÏà¼Ó
                     
                 }
 
-				std::cout << "Use Regular Filter" << endl;
-				std::cout << "filters-size" << w.filters.size() << endl; //31ç»´
+#ifdef SHOW_FUNC_ENTRY
+                std::cout << "Use Regular Filter" << endl;
+                std::cout << "filters-size" << w.filters.size() << endl; //31Î¬
+#endif
             }
 
-			//// 2.åœ¨è¯¥æ¡ä»¶ä¸‹ä½¿ç”¨seperable filterå¯åˆ†ç¦»æ»¤æ³¢å™¨
+            //// 2.ÔÚ¸ÃÌõ¼şÏÂÊ¹ÓÃseperable filter¿É·ÖÀëÂË²¨Æ÷
             else
             {
                 saliency_image.clear();
@@ -48,7 +51,7 @@
                 while (i < w.row_filters.size() && w.row_filters[i].size() == 0) 
                     ++i;
 
-				//// åˆ†æˆxã€yæ–¹å‘ä¸¤ä¸ªç‹¬ç«‹çš„ä¸€ç»´æ»¤æ³¢å™¨
+                //// ·Ö³Éx¡¢y·½ÏòÁ½¸ö¶ÀÁ¢µÄÒ»Î¬ÂË²¨Æ÷
                 for (; i < w.row_filters.size(); ++i)
                 {
                     for (unsigned long j = 0; j < w.row_filters[i].size(); ++j)
@@ -65,117 +68,21 @@
                     assign_all_pixels(saliency_image, 0);
                 }
 
-				std::cout << "Use Separable Filter" << endl;
-				std::cout << "row col filter" << w.row_filters.size() << endl;
-
+#ifdef SHOW_FUNC_ENTRY
+                std::cout << "Use Separable Filter" << endl;
+                std::cout << "row col filter" << w.row_filters.size() << endl;
+#endif
             }
             return area;
         }
-    }
 
 
-        //// åŠŸèƒ½ï¼šåˆ›å»ºfhogé‡‘å­—å¡”
-        template <
-            typename pyramid_type,
-            typename image_type,
-            typename feature_extractor_type
-        >
-        void create_fhog_pyramid(
-        const image_type& img,
-        const feature_extractor_type& fe,
-        array<array<array2d<float> > >& feats,
-        int cell_size,
-        int filter_rows_padding,
-        int filter_cols_padding,
-        unsigned long min_pyramid_layer_width,
-        unsigned long min_pyramid_layer_height,
-        unsigned long max_pyramid_levels
-        )
-        {
-            unsigned long levels = 0;
-            rectangle rect = get_rect(img);
-
-            // æ ¹æ®æœ€å°é‡‘å­—å¡”å±‚çš„å°ºå¯¸ï¼Œç¡®å®šé‡‘å­—å¡”çš„å±‚æ•°
-            // figure out how many pyramid levels we should be using based on the image size
-
-            pyramid_type pyr;
-
-            do
-            {
-                rect = pyr.rect_down(rect);
-                ++levels;
-            } while (rect.width() >= min_pyramid_layer_width && rect.height() >= min_pyramid_layer_height &&
-                levels < max_pyramid_levels);
-
-            if (feats.max_size() < levels)
-                feats.set_max_size(levels);
-            feats.set_size(levels);
-
-            // build our feature pyramid
-            fe(img, feats[0], cell_size, filter_rows_padding, filter_cols_padding); //ç¬¬ä¸€å±‚HOGé‡‘å­—å¡”
-
-            DLIB_ASSERT(feats[0].size() == fe.get_num_planes(),
-                "Invalid feature extractor used with dlib::scan_fhog_pyramid.  The output does not have the \n"
-                "indicated number of planes.");
-
-
-            //// è®¡ç®—ç‰¹å¾é‡‘å­—å¡”
-            if (feats.size() > 1)
-            {
-                typedef typename image_traits<image_type>::pixel_type pixel_type;
-                array2d<pixel_type> temp1, temp2;
-
-                pyr(img, temp1);                                                         //åˆ›å»ºå›¾åƒé‡‘å­—å¡”
-                fe(temp1, feats[1], cell_size, filter_rows_padding, filter_cols_padding);    //è®¡ç®—æ¯ä¸€å±‚å›¾åƒé‡‘å­—å¡”çš„ç‰¹å¾é‡‘å­—å¡”
-                swap(temp1, temp2);
-
-                for (unsigned long i = 2; i < feats.size(); ++i)
-                {
-                    //// é€šè¿‡ä¸Šä¸€å±‚çš„å›¾åƒé‡‘å­—å¡”è®¡ç®—ä¸‹ä¸€å±‚çš„å›¾åƒé‡‘å­—å¡”
-                    pyr(temp2, temp1);
-                    fe(temp1, feats[i], cell_size, filter_rows_padding, filter_cols_padding);
-                    swap(temp1, temp2);
-                }
-
-            }
-
-            //=======================DEBUG SHOW_PYR=======================//
-            if (feats.size() > 4)
-            {
-                typedef typename image_traits<image_type>::pixel_type pixel_type;
-                array2d<pixel_type> temp1, temp2,temp3,temp4;
-
-                image_window win0(img, "original");
-                image_window hogwin0(draw_fhog(feats[0]), "original hog");
-
-                pyr(img, temp1);                                                    
-                image_window win1(temp1, "pyr 1");
-                image_window hogwin1(draw_fhog(feats[1]), "pyr1 hog");
-
-                pyr(temp1, temp2);
-                image_window win2(temp2, "pyr 2");
-                image_window hogwin2(draw_fhog(feats[2]), "pyr2 hog");
-
-                pyr(temp2, temp3);
-                image_window win3(temp3, "pyr 3");
-                image_window hogwin3(draw_fhog(feats[3]), "pyr3 hog");
-
-                pyr(temp3, temp4);
-                image_window win4(temp4, "pyr 4");
-                image_window hogwin4(draw_fhog(feats[4]), "pyr4 hog");
-
-                system("pause");
-            }
-
-        }
-
-
-        //// detect_from_fhog_pyramid()å‡½æ•°
-        //// åŠŸèƒ½ï¼š1.å¯¹HOGç‰¹å¾é‡‘å­—å¡”çš„æŸä¸€å±‚æ»¤æ³¢ï¼ˆæœä¸º31ç»´æ»¤æ³¢ç»“æœç›¸åŠ ï¼‰
-        ////       2.å°†è¯¥å±‚æ»¡è¶³é˜ˆå€¼çš„æ»¤æ³¢ç»“æœï¼Œä»ç‰¹å¾æ£€æµ‹çª—å£ï¼Œè¿˜åŸåˆ°åŸå›¾
-        ////       æ³¨æ„ï¼šä¸€ä¸ªæ»¤æ³¢ç»“æœå¯¹åº”ä¸€ä¸ªæ£€æµ‹çª—å£
-        //// å‚æ•°ï¼š- saliency_image   å­˜æ”¾æ»¤æ³¢åçš„ç»“æœ
-        ////       - area             æ²¡æœ‰è¿›è¡Œ0å¡«å……çš„çŸ©å½¢åŒºåŸŸ
+        //// detect_from_fhog_pyramid()º¯Êı
+        //// ¹¦ÄÜ£º1.¶ÔHOGÌØÕ÷½ğ×ÖËşµÄÄ³Ò»²ãÂË²¨£¨¹ûÎª31Î¬ÂË²¨½á¹ûÏà¼Ó£©
+        ////       2.½«¸Ã²ãÂú×ããĞÖµµÄÂË²¨½á¹û£¬´ÓÌØÕ÷¼ì²â´°¿Ú£¬»¹Ô­µ½Ô­Í¼
+        ////       ×¢Òâ£ºÒ»¸öÂË²¨½á¹û¶ÔÓ¦Ò»¸ö¼ì²â´°¿Ú
+        //// ²ÎÊı£º- saliency_image   ´æ·ÅÂË²¨ºóµÄ½á¹û
+        ////       - area             Ã»ÓĞ½øĞĞ0Ìî³äµÄ¾ØĞÎÇøÓò
         ////       - filter_padding   
 
         template <
@@ -201,14 +108,14 @@
             array2d<float> saliency_image;
             pyramid_type pyr;
 
-            //// éå†æŸä¸€ç‰¹å¾å±‚
+            //// ±éÀúÄ³Ò»ÌØÕ÷²ã
             // for all pyramid levels
             for (unsigned long l = 0; l < feats.size(); ++l)  
             {
-                //// æ¯ä¸€ç‰¹å¾å±‚æ»¤æ³¢åçš„ç»“æœ
-                const rectangle area = apply_filters_to_fhog(w, feats[l], saliency_image);  //é0å¡«å……çš„åŒºåŸŸ
+                //// Ã¿Ò»ÌØÕ÷²ãÂË²¨ºóµÄ½á¹û
+                const rectangle area = apply_filters_to_fhog(w, feats[l], saliency_image);  //·Ç0Ìî³äµÄÇøÓò
 
-                //// éå†æ»¤æ³¢ç»“æœï¼Œæ‰¾å‡ºå¤§äºé˜ˆå€¼çš„æ»¤æ³¢ç»“æœï¼Œä»ç‰¹å¾çš„æ£€æµ‹çª—å£è¿˜åŸåˆ°åŸå›¾åŒºåŸŸ
+                //// ±éÀúÂË²¨½á¹û£¬ÕÒ³ö´óÓÚãĞÖµµÄÂË²¨½á¹û£¬´ÓÌØÕ÷µÄ¼ì²â´°¿Ú»¹Ô­µ½Ô­Í¼ÇøÓò
                 // now search the saliency image for any detections
                 for (long r = area.top(); r <= area.bottom(); ++r)
                 {
@@ -217,7 +124,7 @@
                         // if we found a detection
                         if (saliency_image[r][c] >= thresh)
                         {
-                            //// å°†é™é‡‡æ ·åçš„ç‰¹å¾å±‚è¿˜åŸåˆ°åŸå›¾
+                            //// ½«½µ²ÉÑùºóµÄÌØÕ÷²ã»¹Ô­µ½Ô­Í¼
                             rectangle rect = fe.feats_to_image(centered_rect(point(c,r),det_box_width,det_box_height), 
                                 cell_size, filter_rows_padding, filter_cols_padding);
                             rect = pyr.rect_up(rect, l); 
@@ -227,12 +134,12 @@
                 }
             }
 
-            //=======================DEBUG SHOW_FILTER_RES=======================//
-            ////ç¬¬lç‰¹å¾å±‚æ»¤æ³¢åçš„ç»“æœ
+#ifdef SHOW_FILTER_RES
+            ////µÚlÌØÕ÷²ãÂË²¨ºóµÄ½á¹û
 
-            int level = 3;      //ç¬¬å‡ å±‚ç‰¹å¾å±‚
+            int level = 3;      //µÚ¼¸²ãÌØÕ÷²ã
             std::cout << " HOG Pyramid Level: " << level << endl;
-            const rectangle area = apply_filters_to_fhog(w, feats[level], saliency_image);  //é0å¡«å……çš„åŒºåŸŸ
+            const rectangle area = apply_filters_to_fhog(w, feats[level], saliency_image);  //·Ç0Ìî³äµÄÇøÓò
             for (long r = area.top(); r <= area.bottom(); ++r)
             {
                 std::cout << " *  ";
@@ -243,13 +150,14 @@
                 std::cout << endl;
             }
             std::cout << endl << endl;
+#endif
 
-            std::sort(dets.rbegin(), dets.rend(), compare_pair_rect);   //ä»å¤§åˆ°å°æ’åº
+            std::sort(dets.rbegin(), dets.rend(), compare_pair_rect);   //´Ó´óµ½Ğ¡ÅÅĞò
         }
 
 
-        //// evaluate_detectors()å‡½æ•°
-        //// åŠŸèƒ½ï¼šç›®æ ‡æ£€æµ‹
+        //// evaluate_detectors()º¯Êı
+        //// ¹¦ÄÜ£ºÄ¿±ê¼ì²â
 
         template <
             typename pyramid_type,
@@ -278,13 +186,13 @@
             unsigned long max_pyramid_levels = 0;
             bool all_cell_sizes_the_same = true;
 
-            //// æ£€æµ‹çª—å£çš„å°ºå¯¸ï¼šå–æ‰€æœ‰detectoræœ€å¤§
-            //// æœ€å°é‡‘å­—å¡”å±‚çš„å°ºå¯¸ï¼šå–æ‰€æœ‰detectoræœ€å°
-            //// åˆ¤æ–­æ¯ä¸ªscannerçš„cell sizeå¤§å°æ˜¯å¦ç›¸åŒ
+            //// ¼ì²â´°¿ÚµÄ³ß´ç£ºÈ¡ËùÓĞdetector×î´ó
+            //// ×îĞ¡½ğ×ÖËş²ãµÄ³ß´ç£ºÈ¡ËùÓĞdetector×îĞ¡
+            //// ÅĞ¶ÏÃ¿¸öscannerµÄcell size´óĞ¡ÊÇ·ñÏàÍ¬
             for (unsigned long i = 0; i < detectors.size(); ++i)
             {
                 const scanner_type& scanner = detectors[i].get_scanner();
-                max_filter_width = std::max(max_filter_width, scanner.get_fhog_window_width());      // æ³¨æ„ï¼šè¿™é‡Œçš„çª—å£æ˜¯æ»¤æ³¢å™¨çª—å£ä¸æ˜¯åƒç´ çª—å£
+                max_filter_width = std::max(max_filter_width, scanner.get_fhog_window_width());      // ×¢Òâ£ºÕâÀïµÄ´°¿ÚÊÇÂË²¨Æ÷´°¿Ú²»ÊÇÏñËØ´°¿Ú
                 max_filter_height = std::max(max_filter_height, scanner.get_fhog_window_height());   //
                 max_pyramid_levels = std::max(max_pyramid_levels, scanner.get_max_pyramid_levels());
                 min_pyramid_layer_width = std::min(min_pyramid_layer_width, scanner.get_min_pyramid_layer_width());
@@ -293,22 +201,23 @@
                     all_cell_sizes_the_same = false;
             }
 
-            //=======================DEBUG SHOW_FILTER =======================//
-            //std::cout<<"max_filter_width "<<max_filter_width<<endl;   //æ³¨æ„ï¼šè¿™é‡Œæ˜¯é’ˆå¯¹ç‰¹å¾çš„æ»¤æ³¢å™¨çš„å°ºå¯¸ï¼Œä¸å†æ˜¯åƒç´ çº§çš„å°ºå¯¸
-            //std::cout<<"max_filter_height "<<max_filter_height<<endl;
-            //std::cout<<"all_cell_sizes_the_same "<<all_cell_sizes_the_same<<endl;
-            //max_filter_heightã€weightæ²¡æœ‰ä»€ä¹ˆå®é™…ä½œç”¨ï¼Œä¸è®ºå¯¹hogç‰¹å¾é‡‘å­—å¡”ç”¨ä»€ä¹ˆæ ·çš„æ»¤æ³¢å™¨ï¼Œæ»¤æ³¢ç»“æœçš„å°ºå¯¸ï¼Œä¸hogçš„å°ºå¯¸ç›¸åŒ
+    #ifdef SHOW_SINGLE_DETECT
+            std::cout<<"max_filter_width "<<max_filter_width<<endl;   //×¢Òâ£ºÕâÀïÊÇÕë¶ÔÌØÕ÷µÄÂË²¨Æ÷µÄ³ß´ç£¬²»ÔÙÊÇÏñËØ¼¶µÄ³ß´ç
+            std::cout<<"max_filter_height "<<max_filter_height<<endl;
+            std::cout<<"all_cell_sizes_the_same "<<all_cell_sizes_the_same<<endl;
+            max_filter_height¡¢weightÃ»ÓĞÊ²Ã´Êµ¼Ê×÷ÓÃ£¬²»ÂÛ¶ÔhogÌØÕ÷½ğ×ÖËşÓÃÊ²Ã´ÑùµÄÂË²¨Æ÷£¬ÂË²¨½á¹ûµÄ³ß´ç£¬ÓëhogµÄ³ß´çÏàÍ¬
+    #endif
 
-            //// æ‰€æœ‰detectorçš„cellå°ºå¯¸ä¸€è‡´ï¼Œåªè¦è®¡ç®—ä¸€æ¬¡pyramid HOG
-            std::vector<rect_detection> dets_accum;     //æ£€æµ‹æ¡†ï¼šæ£€æµ‹æ¡†çš„ä½ç½®ã€ç½®ä¿¡åº¦ã€ä½¿ç”¨çš„æ˜¯å“ªä¸ªdetector
+            //// ËùÓĞdetectorµÄcell³ß´çÒ»ÖÂ£¬Ö»Òª¼ÆËãÒ»´Îpyramid HOG
+            std::vector<rect_detection> dets_accum;     //¼ì²â¿ò£º¼ì²â¿òµÄÎ»ÖÃ¡¢ÖÃĞÅ¶È¡¢Ê¹ÓÃµÄÊÇÄÄ¸ödetector
             // Do to the HOG feature extraction to make the fhog pyramid.  Again, note that we
             // are making a pyramid that will work with any of the detectors.  But only if all
             // the cell sizes are the same.  If they aren't then we have to calculate the
             // pyramid for each detector individually.
             
-            array<array<array2d<float> > > feats;       //hogç‰¹å¾é‡‘å­—å¡”
+            array<array<array2d<float> > > feats;       //hogÌØÕ÷½ğ×ÖËş
 
-            //// è‹¥æ¯ä¸ªscannerçš„cell_sizeå°ºå¯¸ä¸€æ ·ï¼Œè®¡ç®—ä¸€æ¬¡ç‰¹å¾é‡‘å­—å¡”
+            //// ÈôÃ¿¸öscannerµÄcell_size³ß´çÒ»Ñù£¬¼ÆËãÒ»´ÎÌØÕ÷½ğ×ÖËş
             if (all_cell_sizes_the_same)
             {
                 impl::create_fhog_pyramid<pyramid_type>(img,
@@ -317,10 +226,10 @@
                     min_pyramid_layer_height, max_pyramid_levels);
             }
 
-            std::vector<std::pair<double, rectangle> > temp_dets;   //ç½®ä¿¡åº¦å’Œæ£€æµ‹åˆ°çš„ç›®æ ‡æ¡†
-            for (unsigned long i = 0; i < detectors.size(); ++i)    //å¯¹åº”ç¬¬å‡ ä¸ªæ‰‹åŠ¿çš„detector[i]
+            std::vector<std::pair<double, rectangle> > temp_dets;   //ÖÃĞÅ¶ÈºÍ¼ì²âµ½µÄÄ¿±ê¿ò
+            for (unsigned long i = 0; i < detectors.size(); ++i)    //¶ÔÓ¦µÚ¼¸¸öÊÖÊÆµÄdetector[i]
             {
-                //// è‹¥scannerçš„cell sizeä¸åŒï¼Œæ¯æ¬¡é‡ç®—ç‰¹å¾é‡‘å­—å¡”
+                //// ÈôscannerµÄcell size²»Í¬£¬Ã¿´ÎÖØËãÌØÕ÷½ğ×ÖËş
                 const scanner_type& scanner = detectors[i].get_scanner();
                 if (!all_cell_sizes_the_same)
                 {
@@ -330,26 +239,27 @@
                         min_pyramid_layer_height, max_pyramid_levels);
                 }
                 
-                //// ç¡®å®šæ£€æµ‹æ¡†çš„å¤§å°
+                //// È·¶¨¼ì²â¿òµÄ´óĞ¡
                 const unsigned long det_box_width  = scanner.get_fhog_window_width()  - 2*scanner.get_padding();    
                 const unsigned long det_box_height = scanner.get_fhog_window_height() - 2*scanner.get_padding();
 
-                //=======================DEBUG SHOW_BOX=======================//
-                //std::cout << "detector " << i+1 << " : " << "box_width " << det_box_width << endl;
-                //std::cout << "detector " << i+1 << " : " << "box_height " << det_box_height << endl << endl;
+    #ifdef SHOW_SINGLE_DETECT
+                std::cout << "detector " << i+1 << " : " << "box_width " << det_box_width << endl;
+                std::cout << "detector " << i+1 << " : " << "box_height " << det_box_height << endl << endl;
+    #endif
 
-                //// ä½¿ç”¨ä¸€ä¸ªç›®æ ‡æ£€æµ‹å™¨ï¼Œå¾—åˆ°ç¬¦åˆè¯¥æ£€æµ‹å™¨çš„ç›®æ ‡æ¡†
+                //// Ê¹ÓÃÒ»¸öÄ¿±ê¼ì²âÆ÷£¬µÃµ½·ûºÏ¸Ã¼ì²âÆ÷µÄÄ¿±ê¿ò
                 // A single detector object might itself have multiple weight vectors in it. So
                 // we need to evaluate all of them.
-                for (unsigned d = 0; d < detectors[i].num_detectors(); ++d)     //ä½¿ç”¨çš„ç¬¬å‡ ä¸ªdetector[i]ä¸­çš„ç¬¬å‡ ä¸ªæ»¤æ³¢å™¨ //detectors[i].num_detectors()=1 å³è®ºæ–‡ä¸­ä½¿ç”¨çš„å•ä¸ªæ»¤æ³¢å™¨
+                for (unsigned d = 0; d < detectors[i].num_detectors(); ++d)     //Ê¹ÓÃµÄµÚ¼¸¸ödetector[i]ÖĞµÄµÚ¼¸¸öÂË²¨Æ÷ //detectors[i].num_detectors()=1 ¼´ÂÛÎÄÖĞÊ¹ÓÃµÄµ¥¸öÂË²¨Æ÷
                 {
-                    const double thresh = detectors[i].get_processed_w(d).w(scanner.get_num_dimensions());      //threshold è®­ç»ƒé˜ˆå€¼
+                    const double thresh = detectors[i].get_processed_w(d).w(scanner.get_num_dimensions());      //threshold ÑµÁ·ãĞÖµ
 
-
+    #ifdef SHOW_FILTER_RES
                     std::cout << " Gesture " << i+1 << " Detection " << endl;
-
+    #endif
                     impl::detect_from_fhog_pyramid<pyramid_type>(feats, scanner.get_feature_extractor(),
-                        detectors[i].get_processed_w(d).get_detect_argument(), thresh+adjust_threshold,         //thresh + adjust_thresholdï¼Œadjust_threshold=-0.3
+                        detectors[i].get_processed_w(d).get_detect_argument(), thresh+adjust_threshold,         //thresh + adjust_threshold£¬adjust_threshold=-0.3
                         det_box_height, det_box_width, cell_size, max_filter_height,
                         max_filter_width, temp_dets);
 
@@ -364,21 +274,19 @@
                 }
             }
 
-            //// åŒä¸€ä¸ªdetectorå¾—åˆ°çš„æ‰€æœ‰æ£€æµ‹æ¡†ï¼Œä½¿ç”¨éæå¤§å€¼æŠ‘åˆ¶åˆå¹¶
+            //// Í¬Ò»¸ödetectorµÃµ½µÄËùÓĞ¼ì²â¿ò£¬Ê¹ÓÃ·Ç¼«´óÖµÒÖÖÆºÏ²¢
             // Do non-max suppression
             dets.clear();
             if (detectors.size() > 1)
                 std::sort(dets_accum.rbegin(), dets_accum.rend());
             for (unsigned long i = 0; i < dets_accum.size(); ++i)
             {
-                const test_box_overlap tester = detectors[dets_accum[i].weight_index].get_overlap_tester();     //æ³¨æ„ï¼štester æ˜¯å¯¹åº”ç›¸åº”çš„detector[i]çš„
-                                                                                                                //testeræ˜¯object_detectorç±»ä¸­çš„ä¸€ä¸ªæˆå‘˜å˜é‡   boxes_overlapï¼Œè¯¥å˜é‡æ˜¯test_box_overlapç±» 
+                const test_box_overlap tester = detectors[dets_accum[i].weight_index].get_overlap_tester();     //×¢Òâ£ºtester ÊÇ¶ÔÓ¦ÏàÓ¦µÄdetector[i]µÄ
+                                                                                                                //testerÊÇobject_detectorÀàÖĞµÄÒ»¸ö³ÉÔ±±äÁ¿   boxes_overlap£¬¸Ã±äÁ¿ÊÇtest_box_overlapÀà 
                 if (impl::overlaps_any_box(tester, dets, dets_accum[i]))
                     continue;
 
                 dets.push_back(dets_accum[i]);
             }
         }
-
-
-
+        

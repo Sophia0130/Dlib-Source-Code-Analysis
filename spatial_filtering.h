@@ -1,5 +1,6 @@
-	//// spatially_filter_image 进入
-	//// 使用了SIMD加速
+    //// spatially_filter_image 进入
+    //// 使用了SIMD加速
+    
         template <
             typename in_image_type,
             typename out_image_type,
@@ -37,7 +38,7 @@
 
             out_img.set_size(in_img.nr(),in_img.nc());
 
-			
+            
             // figure out the range that we should apply the filter to
             const long first_row = filter.nr()/2;
             const long first_col = filter.nc()/2;
@@ -48,18 +49,18 @@
             if (!add_to)
                 zero_border_pixels(out_img_, non_border); 
 
-			//// 8个横向滤波器使用SIMD并行计算
-			//// r、c对应特征的某一维使用检测窗口遍历的位置，m、n对应检测窗口内部卷积时的扫描
+            //// 8个横向滤波器使用SIMD并行计算
+            //// r、c对应特征的某一维使用检测窗口遍历的位置，m、n对应检测窗口内部卷积时的扫描
             // apply the filter to the image
-			//for (long r = first_row+2; r < last_row-2; ++r)
+            //for (long r = first_row+2; r < last_row-2; ++r)
             for (long r = first_row; r < last_row; ++r)
             {
-				//long c = first_col + 2;
-				//for (; c < last_col - 7; c += 9)
-				long c = first_col;
+                //long c = first_col + 2;
+                //for (; c < last_col - 7; c += 9)
+                long c = first_col;
                 for (long c = first_col; c < last_col-7; c+=8)
                 {
-                	//// 每个滤波器在一个for循环里做3个横向特征的点积（注意：是对8个横向滤波器的并行计算，不是1个滤波器里3个横向特征的并行）
+                    //// 每个滤波器在一个for循环里做3个横向特征的点积（注意：是对8个横向滤波器的并行计算，不是1个滤波器里3个横向特征的并行）
                     simd8f p,p2,p3;
                     simd8f temp = 0, temp2=0, temp3=0;
                     for (long m = 0; m < filter.nr(); ++m)
@@ -95,8 +96,8 @@
                         temp += p;
                         temp.store(&out_img[r][c]);
                     }
-                }	//8个横向
-				//for (; c < last_col-2; ++c)
+                }   //8个横向
+                //for (; c < last_col-2; ++c)
                 for (; c < last_col; ++c)
                 {
                     float p;
@@ -125,7 +126,6 @@
 
             return non_border;
         }
-    }
 
 
     //// apply_filters_to_fhog 进入
